@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 
 from bokeh.models.widgets import Panel, Tabs
-from bokeh.io import output_file, show
+from bokeh.io import output_file, save
 from bokeh.plotting import figure, ColumnDataSource
 from bokeh.layouts import column, layout, gridplot
 from bokeh.models import Div, WheelZoomTool
@@ -46,7 +46,7 @@ def visualize_paths(gt_path, pred_path, html_tile="", title="VO exercises", file
     fig2.circle("diffx", "diffy", source=source, hover_fill_color="firebrick", legend_label="Error")
     fig2.line("diffx", "diffy", source=source, legend_label="Error")
 
-    show(layout([Div(text=f"<h1>{title}</h1>"),
+    save(layout([Div(text=f"<h1>{title}</h1>"),
                  Div(text="<h2>Paths</h1>"),
                  [fig1, fig2],
                  ], sizing_mode='scale_width'))
@@ -80,12 +80,12 @@ def plot_residual_results(qs_small, small_residual_init, small_residual_minimize
     x = np.arange(2 * qs.shape[0])
     fig4, fig5, fig6 = make_residual_plot(x, residual_init, residual_minimized)
 
-    show(layout([Div(text="<h1>Bundle Adjustment exercises</h1>"),
-                 Div(text="<h2>Bundle adjustment with reduced parameters</h1>"),
-                 gridplot([[fig1, fig2, fig3]], toolbar_location='above'),
-                 Div(text="<h2>Bundle adjustment with all parameters (with sparsity)</h1>"),
-                 gridplot([[fig4, fig5, fig6]], toolbar_location='above')
-                 ]))
+    #show(layout([Div(text="<h1>Bundle Adjustment exercises</h1>"),
+     #            Div(text="<h2>Bundle adjustment with reduced parameters</h1>"),
+      #           gridplot([[fig1, fig2, fig3]], toolbar_location='above'),
+       #          Div(text="<h2>Bundle adjustment with all parameters (with sparsity)</h1>"),
+        #         gridplot([[fig4, fig5, fig6]], toolbar_location='above')
+         #        ]))
 
 
 def plot_sparsity(sparse_mat):

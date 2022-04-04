@@ -1,0 +1,57 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.217.4/containers/ubuntu
+{
+	"name": "UbuntuGPU",
+	"build": {
+		"dockerfile": "Dockerfile",		
+		"context": ".."
+	},
+	
+	"runArgs": ["--init", "--gpus", "all", "--network=host", "-e", "NVIDIA_DRIVER_CAPABILITIES=video,compute,utility"],
+
+	// Use this environment variable if you need to bind mount your local source code into a new container.
+	"remoteEnv": {
+		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+	},
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"terminal.integrated.defaultProfile.linux": "zsh",
+	},
+
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"ms-azuretools.vscode-docker",
+		"shardulm94.trailing-spaces",
+	],
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "uname -a",
+
+	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode",
+
+	"features": {
+		"docker-from-docker": "20.10",
+		"kubectl-helm-minikube": {
+            "version": "latest",
+            "helm": "latest",
+            "minikube": "none"
+        },
+		"git": "os-provided"        
+	},
+
+
+	"overrideCommand": false,
+
+	"mounts": [
+        "source=${env:HOME}${env:USERPROFILE}/.azure,target=/home/vscode/.azure,type=bind",
+        "source=${env:HOME}${env:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,readonly",
+        "source=stormcloud-vd-zshhistory,target=/commandhistory,type=volume"
+    ],
+	
+}
