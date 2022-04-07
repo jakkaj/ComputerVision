@@ -27,7 +27,7 @@ else:
 
 
 # Open up the video capture from a webcam
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture("rtsp://192.168.3.219:8554/happy")
 
 while cap.isOpened():
 
@@ -67,10 +67,11 @@ while cap.isOpened():
     depth_map = cv2.applyColorMap(depth_map , cv2.COLORMAP_MAGMA)
 
     cv2.putText(img, f'FPS: {int(fps)}', (20,70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,255,0), 2)
-    cv2.imshow('Image', img)
-    cv2.imshow('Depth Map', depth_map)
-
-    if cv2.waitKey(5) & 0xFF == 27:
-        break
+    #cv2.imshow('Image', img)
+    #cv2.imshow('Depth Map', depth_map)
+    cv2.imwrite("img.jpg", img);
+    cv2.imwrite("depth.jpg", depth_map);
+    time.sleep(.01)
+    
 
 cap.release()
