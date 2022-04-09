@@ -32,7 +32,7 @@ else:
 
 
 # Open up the video capture from a webcam
-cap = cv2.VideoCapture(2)
+cap = cv2.VideoCapture("../dump.mp4")
 
 while cap.isOpened():
 

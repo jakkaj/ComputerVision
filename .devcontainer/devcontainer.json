@@ -1,13 +1,25 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.217.4/containers/ubuntu
 {
-	"name": "UbuntuGPU",
+	"name": "SamplesGPU",
 	"build": {
 		"dockerfile": "Dockerfile",		
 		"context": ".."
 	},
 	
-	"runArgs": ["--init", "--gpus", "all", "--network=host", "-e", "NVIDIA_DRIVER_CAPABILITIES=video,compute,utility"],
+	"runArgs": ["--init", 
+		"--gpus", "all", 
+		"--network=host", 
+		"-e", "NVIDIA_DRIVER_CAPABILITIES=video,compute,utility",
+		"-e", "DISPLAY=${env:DISPLAY}",
+		"-e", "WAYLAND_DISPLAY=${env:WAYLAND_DISPLAY}",
+		"-e", "XDG_RUNTIME_DIR=${env:XDG_RUNTIME_DIR}",
+		"-e", "PULSE_SERVER=${env:PULSE_SERVER}",
+		"-v", "/mnt/wslg:/mnt/wslg",
+        "-v", "/tmp/.X11-unix:/tmp/.X11-unix",
+		
+	],
+	
 
 	// Use this environment variable if you need to bind mount your local source code into a new container.
 	"remoteEnv": {
@@ -49,9 +61,9 @@
 	"overrideCommand": false,
 
 	"mounts": [
-        "source=${env:HOME}${env:USERPROFILE}/.azure,target=/home/vscode/.azure,type=bind",
+        
         "source=${env:HOME}${env:USERPROFILE}/.ssh,target=/home/vscode/.ssh,type=bind,readonly",
-        "source=stormcloud-vd-zshhistory,target=/commandhistory,type=volume"
+        "source=happy-vd-zshhistory,target=/commandhistory,type=volume"
     ],
 	
 }

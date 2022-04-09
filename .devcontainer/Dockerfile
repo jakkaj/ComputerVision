@@ -49,15 +49,15 @@ ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
 CMD [ "sleep", "infinity" ]
 
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-     && apt-get -y install --no-install-recommends build-essential mosquitto-clients ffmpeg libsm6 libxext6 python3-opencv python3-pip \
+     && apt-get -y install --no-install-recommends build-essential mosquitto-clients ffmpeg libsm6 libxext6 python3-opencv python3-pip eog\
         && \
         localedef -i en_AU -c -f UTF-8 -A /usr/share/locale/locale.alias en_AU.UTF-8
 
 
-RUN wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+#RUN wget -q -O - https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
 
-RUN curl -Lo ./k9s.tar.gz https://github.com/derailed/k9s/releases/download/v0.25.18/k9s_Linux_x86_64.tar.gz && \
-    mkdir k9s && tar xvzf k9s.tar.gz -C ./k9s && mv ./k9s/k9s /bin/k9s
+#RUN curl -Lo ./k9s.tar.gz https://github.com/derailed/k9s/releases/download/v0.25.18/k9s_Linux_x86_64.tar.gz && \
+ #   mkdir k9s && tar xvzf k9s.tar.gz -C ./k9s && mv ./k9s/k9s /bin/k9s
 
 
 
