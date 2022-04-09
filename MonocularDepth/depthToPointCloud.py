@@ -40,7 +40,19 @@ while cap.isOpened():
 
     start = time.time()
 
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    imgWidth = img.shape[1]
+    imgHeight = img.shape[0]
+
+    # rip just the left image (which is top half of frame!)
+    x1 = 0
+    y1 = 0
+    x2 = imgWidth
+    y2 = int(.5 * imgHeight)
+
+    leftImage = img[y1:y2, x1:x2]
+
+
+    img = cv2.cvtColor(leftImage, cv2.COLOR_BGR2RGB)
 
     # Apply input transforms
     input_batch = transform(img).to(device)
@@ -87,8 +99,8 @@ while cap.isOpened():
     cv2.imshow('Image', img)
     cv2.imshow('Depth Map', depth_map)
 
-    if cv2.waitKey(5) & 0xFF == 27:
-        break
+    
+    break
 
 
 
