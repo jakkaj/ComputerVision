@@ -4,11 +4,16 @@ import time
 import numpy as np
 
 # Q matrix - Camera parameters - Can also be found using stereoRectify
-Q = np.array(([1.0, 0.0, 0.0, -160.0],
-              [0.0, 1.0, 0.0, -120.0],
-              [0.0, 0.0, 0.0, 350.0],
-              [0.0, 0.0, 1.0/90.0, 0.0]),dtype=np.float32)
+#Q = np.array(([1.0, 0.0, 0.0, -160.0],
+ #             [0.0, 1.0, 0.0, -120.0],
+  #            [0.0, 0.0, 0.0, 350.0],
+   #           [0.0, 0.0, 1.0/90.0, 0.0]),dtype=np.float32)
 
+
+Q = np.array(([ 1,  0,  0, -4.67724300],
+ [ 0,  1.00000000,  0, -2.53411711],
+ [ 0,  0,  0,  5.91161158],
+ [ 0,  0,  1.35212397, 0]), dtype=np.float32)
 
 # Load a MiDas model for depth estimation
 model_type = "DPT_Large"     # MiDaS v3 - Large     (highest accuracy, slowest inference speed)
@@ -32,75 +37,75 @@ else:
 
 
 # Open up the video capture from a webcam
-cap = cv2.VideoCapture("../dump.mp4")
+#cap = cv2.VideoCapture("../dump.mp4")
 
-while cap.isOpened():
-
-    success, img = cap.read()
-
-    start = time.time()
-
-    imgWidth = img.shape[1]
-    imgHeight = img.shape[0]
-
-    # rip just the left image (which is top half of frame!)
-    x1 = 0
-    y1 = 0
-    x2 = imgWidth
-    y2 = int(.5 * imgHeight)
-
-    leftImage = img[y1:y2, x1:x2]
+#while cap.isOpened():
 
 
-    img = cv2.cvtColor(leftImage, cv2.COLOR_BGR2RGB)
-
-    # Apply input transforms
-    input_batch = transform(img).to(device)
-
-    # Prediction and resize to original resolution
-    with torch.no_grad():
-        prediction = midas(input_batch)
-
-        prediction = torch.nn.functional.interpolate(
-            prediction.unsqueeze(1),
-            size=img.shape[:2],
-            mode="bicubic",
-            align_corners=False,
-        ).squeeze()
-
-    depth_map = prediction.cpu().numpy()
-
-    depth_map = cv2.normalize(depth_map, None, 0, 1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
-
-    #Reproject points into 3D
-    points_3D = cv2.reprojectImageTo3D(depth_map, Q, handleMissingValues=False)
+img = cv2.imread("21l.jpg")
+#success, img = cap.read()
 
 
-    #Get rid of points with value 0 (i.e no depth)
-    mask_map = depth_map > 0.4
 
-    #Mask colors and points. 
-    output_points = points_3D[mask_map]
-    output_colors = img[mask_map]
+# start = time.time()
 
-    end = time.time()
-    totalTime = end - start
+# imgWidth = img.shape[1]
+# imgHeight = img.shape[0]
 
-    fps = 1 / totalTime
+# # rip just the left image (which is top half of frame!)
+# x1 = 0
+# y1 = 0
+# x2 = imgWidth
+# y2 = int(.5 * imgHeight)
 
-    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+# leftImage = img[y1:y2, x1:x2]
+
+
+img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+# Apply input transforms
+input_batch = transform(img).to(device)
+
+# Prediction and resize to original resolution
+with torch.no_grad():
+    prediction = midas(input_batch)
+
+    prediction = torch.nn.functional.interpolate(
+        prediction.unsqueeze(1),
+        size=img.shape[:2],
+        mode="bicubic",
+        align_corners=False,
+    ).squeeze()
+
+depth_map = prediction.cpu().numpy()
+
+depth_map = cv2.normalize(depth_map, None, 0, 1, norm_type=cv2.NORM_MINMAX, dtype=cv2.CV_32F)
+
+#Reproject points into 3D
+points_3D = cv2.reprojectImageTo3D(depth_map, Q, handleMissingValues=False)
+
+
+#Get rid of points with value 0 (i.e no depth)
+mask_map = depth_map > 0.4
+
+#Mask colors and points. 
+output_points = points_3D[mask_map]
+output_colors = img[mask_map]
+
+
+img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+
+depth_map = (depth_map*255).astype(np.uint8)
+depth_map = cv2.applyColorMap(depth_map , cv2.COLORMAP_MAGMA)
+
+
+
+cv2.imshow('Image', img)
+cv2.imshow('Depth Map', depth_map)
 
     
-    depth_map = (depth_map*255).astype(np.uint8)
-    depth_map = cv2.applyColorMap(depth_map , cv2.COLORMAP_MAGMA)
 
-
-    cv2.putText(img, f'FPS: {int(fps)}', (20,70), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0,255,0), 2)
-    cv2.imshow('Image', img)
-    cv2.imshow('Depth Map', depth_map)
-
-    
-    break
 
 
 
@@ -131,6 +136,6 @@ output_file = 'pointCloudDeepLearning.ply'
 #Generate point cloud 
 create_output(output_points, output_colors, output_file)
 
-cap.release()
+
 cv2.destroyAllWindows()
 
